@@ -19,9 +19,19 @@ const firebaseConfig = {
 };
 const app = fapp.initializeApp(firebaseConfig);
 const db = getDatabase(app);
-async function getAllData(database) {
-  const snapshot = await get(ref(db, database));
-  return JSON.stringify(snapshot.val());
+async function getAllData(database, id) {
+  if (id == undefined) {
+    const snapshot = await get(ref(db, database));
+    return JSON.stringify(snapshot.val());
+  } else {
+    const res=await get(ref(db,database+"/"+id));
+    if(res.exists()){
+      return JSON.stringify(res.val());
+    }else{
+      return JSON.stringify({msg:"Key does not exists"})
+    }
+  }
+
 }
 async function addData(database, data, id) {
   if (id == undefined) {
@@ -90,7 +100,7 @@ async function getChargersPerUser(username) {
 }
 
 async function searchChargers(filter) {
-  let res=[];
+  let res = [];
   if (filter.orderBy == undefined) {
     const snapshot = await get(ref(db, "chargers"));
     return JSON.stringify(snapshot.val());
@@ -105,7 +115,7 @@ async function searchChargers(filter) {
     });
     return JSON.stringify(res);
   } else if (filter.orderBy == "rating") {
-    let res=[];
+    let res = [];
     const queryRef = fdb.query(ref(db, "chargers"), orderByChild("rating"));
     const snapshot = await get(queryRef);
     snapshot.forEach((doc) => {
@@ -114,7 +124,7 @@ async function searchChargers(filter) {
     return JSON.stringify(res);
   } else {
     return JSON.stringify({
-      msg:"Invalid filter constraint"
+      msg: "Invalid filter constraint"
     });
   }
 }

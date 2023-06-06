@@ -11,7 +11,7 @@ const {
 const router = express.Router();
 
 router.get("/get/:dbtype", async (req, res) => {
-  const data = JSON.parse(await getAllData(req.params.dbtype));
+  const data = JSON.parse(await getAllData(req.params.dbtype,req.query.id));
   res.send(data);
 });
 
@@ -20,7 +20,6 @@ router.post("/:dbtype", async (req, res) => {
 });
 
 router.delete("/delete/:dbtype", async (req, res) => {
-  // res.send("hiii")
   res.send(await deleteData(req.params.dbtype, req.query.id));
 });
 
